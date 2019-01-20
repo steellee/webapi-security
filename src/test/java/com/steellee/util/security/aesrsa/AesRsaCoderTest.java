@@ -8,7 +8,7 @@ import org.junit.Test;
 import java.util.HashMap;
 
 /**
- * 开放接口方案：AESCoder+RSA 应用示例
+ * 开放接口方案：AES加解密数据 + RSA验签 应用示例
  *
  * @author steellee
  * @version V2.0.0

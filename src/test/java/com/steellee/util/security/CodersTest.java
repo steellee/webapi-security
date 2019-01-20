@@ -1,8 +1,10 @@
 package com.steellee.util.security;
 
+import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
 import org.junit.Test;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;

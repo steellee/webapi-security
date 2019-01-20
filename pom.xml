@@ -40,14 +40,6 @@
             <version>1.60</version>
         </dependency>
 
-        <!--接口API版本管理-->
-        <dependency>
-            <groupId>com.slowlybirld</groupId>
-            <artifactId>api-version</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

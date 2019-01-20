@@ -22,7 +22,12 @@
 ## 二. 对称加密组件
 ### 1. 介绍说明
 
-    ALGORITHM -->  算法/模式/补码方式    
+    对称加密算法: 
+        较传统的加密体制，通信双方在加/解密过程中使用他们共享的单一密钥，鉴于其算法简单和加密速度快的优点，目前仍然是主流的密码体制之一。
+    最常用的对称密码算法是数据加密标准（DES）算法，但是由于DES密钥长度较短，已经不适合当今分布式开放网络对数据加密安全性的要求。
+    最后，一种新的基于Rijndael算法对称高级数据加密标准AES取代了数据加密标准DES。
+    
+    ALGORITHM -->  算法/模式/补码方式; 如: AES -> 默认使用AES/ECB/PKCS5Padding
     1，算法: DES, DESede, AES,...RC4
       各自密钥长度不同
      * DES          key size must be equal to 56 
@@ -31,8 +36,7 @@
      * Blowfish     key size must be multiple of 8, and can only range from 32 to 448 (inclusive) 
      * RC2          key size must be between 40 and 1024 bits 
      * RC4(ARCFOUR) key size must be between 40 and 1024 bits 
-     
-     如: AES -> 默认使用ECB/PKCS5Padding
+          
      2，加密模式: CBC、ECB、CTR、OCF、CFB
      /参照：https://blog.csdn.net/xiaowang627/article/details/56270206/
  
@@ -46,41 +50,43 @@
 
     参照实例：AesCoderTest
 
-## 三. RSA + AES 
+## 三. AES加解密数据 + RSA验签
 ### 1. 介绍说明
 
     数据加密技术根据加密密钥类型可分私钥加密（对称加密）系统和公钥加密（非对称加密）系统。
-    1) 对称加密算法: 
-        较传统的加密体制，通信双方在加/解密过程中使用他们共享的单一密钥，鉴于其算法简单和加密速度快的优点，目前仍然是主流的密码体制之一。
-    最常用的对称密码算法是数据加密标准（DES）算法，但是由于DES密钥长度较短，已经不适合当今分布式开放网络对数据加密安全性的要求。
-    最后，一种新的基于Rijndael算法对称高级数据加密标准AES取代了数据加密标准DES。
-    2) 非对称加密:
-        由于加/解密钥不同（公钥加密，私钥解密），密钥管理简单，也得到广泛应用。RSA是非对称加密系统最著名的公钥密码算法。
+    非对称加密:
+        由于加/解密钥不同（公钥加密，私钥解密），密钥管理简单，也得到广泛应用。
+        * DSA 基于整数有限域离散对数难题的，安全性与RSA相比差不多，只用于签名；
+        * RSA 安全性依赖于大数分解，可用于签名,用于少量数据加密，1978年提出至今，普遍认为是目前最优秀的公钥方案之一
 
 ### 2. 处理流程
-
+              
     参照实例：AesRsaCoderTest
+    RAS通用处理：
+    client处理：通过server私钥加密、client公钥解密
+    server处理：通过client私钥签名、client公钥验证签名
+    （本实例RSA只对aseKey加密，参数传递用AES加解密）
     
 #### 客户端处理：
 ##### 2.1 生成encryptkey：
 
-    	服务器端(server)和客户端(client)分别生成自己的密钥对
-    	server和client分别交换自己的公钥
-    	client生成AES密钥(aesKey)—可随机、可固定，client自己保存
-    	client使用sever的RSA公钥对aesKey进行加密， 得到encryptkey
+    服务器端(server)和客户端(client)分别生成自己的密钥对
+    * server和client分别交换自己的公钥
+    * client生成AES密钥(aesKey)—可随机、可固定，client自己保存
+    * client使用sever的RSA公钥对aesKey进行加密， 得到encryptkey
 
 ##### 2.2 生成sign：
 
-    	client使用自己的RSA私钥(privateKey)对请求明文数据(data json)进行数字签名，得到sign
-    	将签名sign加入到请求参数中，然后转换为json格式
+    * client使用自己的RSA私钥(privateKey)对请求明文数据(data json)进行数字签名，得到数字签名sign
+    * 将sign加入到请求参数中，然后转换为json格式
 
 ##### 2.3 加密请求data
 
-    	client使用aesKey对json数据进行加密得到密文(data)
+    * client使用aesKey对json数据进行加密得到密文(data)
 
 ##### 2.4 请求服务器
 
-    	分别将data和encryptkey作为参数传输给服务器端
+    * 分别将data和encryptkey作为参数传输给服务器端
 
 
 #### 服务端处理
@@ -97,7 +103,7 @@
     (https://blog.csdn.net/u013758702/article/details/80241317)
     1) 介绍：
     SM1 为对称加密。其加密强度与AES相当。该算法不公开，调用该算法时，需要通过加密芯片的接口进行调用。
-    SM2为非对称加密，基于ECC。该算法已公开。由于该算法基于ECC，故其签名速度与秘钥生成速度都快于RSA。ECC 256位（SM2采用的就是ECC 256位的一种）安全强度比RSA 2048位高，但运算速度快于RSA。
+    SM2为非对称加密，基于非对称加密算法强度最高级ECC，椭圆曲线密码编码学。该算法已公开。由于该算法基于ECC，故其签名速度与秘钥生成速度都快于RSA。ECC 256位（SM2采用的就是ECC 256位的一种）安全强度比RSA 2048位高，但运算速度快于RSA。
     SM3 消息摘要。可以用MD5作为对比理解。该算法已公开。校验结果为256位
     SM4 无线局域网标准的分组数据算法。对称加密，密钥长度和分组长度均为128位。 
     

@@ -71,7 +71,12 @@ public class RSA {
     }
 
     /**
-     * 加密方法 source： 源数据
+     *  RSA加密
+     *
+     * @param source 源数据
+     * @param publicKey server公钥
+     * @return 加密数据
+     * @throws Exception 异常
      */
     public static String encrypt(String source, String publicKey) throws Exception {
         Key key = getPublicKey(publicKey);
@@ -85,7 +90,12 @@ public class RSA {
     }
 
     /**
-     * 解密算法 cryptograph:密文
+     * RSA解密算法
+     *
+     * @param cryptograph 密文
+     * @param privateKey server私钥
+     * @return 明文
+     * @throws Exception 异常
      */
     public static String decrypt(String cryptograph, String privateKey) throws Exception {
         Key key = getPrivateKey(privateKey);
@@ -102,7 +112,7 @@ public class RSA {
      * 得到公钥
      *
      * @param key 密钥字符串（经过base64编码）
-     * @throws Exception
+     * @throws Exception 异常
      */
     public static PublicKey getPublicKey(String key) throws Exception {
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.getDecoder().decode(key.getBytes()));
@@ -115,7 +125,7 @@ public class RSA {
      * 得到私钥
      *
      * @param key 密钥字符串（经过base64编码）
-     * @throws Exception
+     * @throws Exception 异常
      */
     public static PrivateKey getPrivateKey(String key) throws Exception {
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(key.getBytes()));
@@ -124,6 +134,12 @@ public class RSA {
         return privateKey;
     }
 
+    /**
+     * RSA 签名
+     * @param content 传递内容
+     * @param privateKey client私钥
+     * @return 数字签名
+     */
     public static String sign(String content, String privateKey) {
         String charset = CHAR_ENCODING;
         try {
@@ -145,6 +161,14 @@ public class RSA {
         return null;
     }
 
+    /**
+     *  验证签名
+     *
+     * @param content client传递的签名数据
+     * @param sign client传递的数字签名
+     * @param publicKey server公钥
+     * @return
+     */
     public static boolean checkSign(String content, String sign, String publicKey) {
         try {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
@@ -169,5 +193,4 @@ public class RSA {
         System.out.println("publicKey: " + map.get("publicKey"));
         System.out.println("privateKey: " + map.get("privateKey"));
     }
-
 }

@@ -37,8 +37,6 @@ public class Coders {
      */
     public static final String KEY_MAC = "HmacSHA256";
 
-
-
     /**
      * BASE64解密
      *
@@ -62,7 +60,6 @@ public class Coders {
      */
     public static String encryptBASE64(byte[] key) {
         return Base64.getEncoder().encodeToString(key);
-//        return (new BASE64Encoder()).encodeBuffer(key);
     }
 
     /**
@@ -73,12 +70,9 @@ public class Coders {
      * @throws Exception
      */
     public static byte[] encryptMD5(byte[] data) throws Exception {
-
         MessageDigest md5 = MessageDigest.getInstance(KEY_MD5);
         md5.update(data);
-
         return md5.digest();
-
     }
 
     /**
@@ -89,12 +83,9 @@ public class Coders {
      * @throws Exception
      */
     public static byte[] encryptSHA(byte[] data) throws Exception {
-
         MessageDigest sha = MessageDigest.getInstance(KEY_SHA);
         sha.update(data);
-
         return sha.digest();
-
     }
 
     /**
@@ -105,13 +96,13 @@ public class Coders {
      */
     public static String initMacKey() throws Exception {
         KeyGenerator keyGenerator = KeyGenerator.getInstance(KEY_MAC);
-
         SecretKey secretKey = keyGenerator.generateKey();
         return encryptBASE64(secretKey.getEncoded());
     }
 
     /**
      * HMAC加密
+     *  类似我们的md5(message + salt)
      *
      * @param data
      * @param key
@@ -119,12 +110,9 @@ public class Coders {
      * @throws Exception
      */
     public static byte[] encryptHMAC(byte[] data, String key) throws Exception {
-
         SecretKey secretKey = new SecretKeySpec(decryptBASE64(key), KEY_MAC);
         Mac mac = Mac.getInstance(secretKey.getAlgorithm());
         mac.init(secretKey);
-
         return mac.doFinal(data);
-
     }
 }
