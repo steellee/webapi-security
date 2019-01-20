@@ -1,8 +1,7 @@
-package com.steellee.util.security.rsaAes;
+package com.steellee.util.security.aesrsa;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.steellee.util.security.AESCoder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,7 +14,7 @@ import java.util.HashMap;
  * @version V2.0.0
  * @date 2019/01/13
  */
-public class RsaAESCoderTest {
+public class AesRsaCoderTest {
 
     /**
      * 1. 服务器端(server)和客户端(client)分别生成自己的密钥对
@@ -45,6 +44,7 @@ public class RsaAESCoderTest {
         "Nlw3L0iogs9WTIGm3el1SuZLyMnMksnV0NCsuq538cPMNppZRwARb7NXmpmh0KM7" +
         "9fJ/1xqnpo1tgRcv4wIDAQAB";
 
+    /** 固定AES密钥*/
     public final String ACCESS_KEY = "kl0QkB7NB98qmSSB";
 
     @Test
@@ -90,10 +90,7 @@ public class RsaAESCoderTest {
         System.out.println("6. 将签名加入到请求参数中，然后转换为json格式--加密前的请求数据:\n" +  jsonParams);
 
         // 7. client使用aesKey对请求数据(jsonParams)进行加密得到密文(data)
-        String data = AESCoder.encryptToBase64(
-            // 加解密前转为为16进制(CBC模式要求加密字符串长度为16倍数)
-            ConvertUtils.stringToHexString(jsonParams)
-            , aesKey);
+        String data = AESCoder.encryptToBase64(jsonParams, aesKey);
         System.out.println("7. client使用aesKey对json数据进行加密得到密文(data): "+ data);
 
 
@@ -120,7 +117,7 @@ public class RsaAESCoderTest {
             System.out.println("2, 验签通过。使用sever私钥对encryptkey进行解密，得到aeskey: "+ aeskey);
 
             // 3，使用aesKey对json数据进行解密得到明文(data)
-            String data = ConvertUtils.hexStringToString(AESCoder.decryptFromBase64(RequestInfo.data, aeskey));
+            String data = AESCoder.decryptFromBase64(RequestInfo.data, aeskey);
             System.out.println("3，使用aesKey对json数据进行解密得到明文(data) : "+ data);
 
             JSONObject jsonObj = JSONObject.parseObject(data);
@@ -128,7 +125,6 @@ public class RsaAESCoderTest {
             String orderId = jsonObj.getString("orderId");
             String dfMercId = jsonObj.getString("dfMercId");
             String amt = jsonObj.getString("amt");
-
             System.out.println("-----------得到最终解密后的明文:"
                 + "sid: " + sid
                 + " orderId: " + orderId

@@ -5,6 +5,7 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.MessageDigest;
+import java.util.Base64;
 
 /**
  * 基础加密组件
@@ -48,7 +49,7 @@ public class Coders {
     public static byte[] decryptBASE64(String key) {
         // 从JDK 1.8开始，就提供了java.util.Base64.Decoder和java.util.Base64.Encoder的JDK公共API，
         // 可代替sun.misc.BASE64Decoder和sun.misc.BASE64Encoder的JDK内部API
-        return java.util.Base64.getDecoder().decode(key);
+        return Base64.getDecoder().decode(key);
 //        return (new BASE64Decoder()).decodeBuffer(key);
     }
 
@@ -60,7 +61,7 @@ public class Coders {
      * @throws Exception
      */
     public static String encryptBASE64(byte[] key) {
-        return java.util.Base64.getEncoder().encodeToString(key);
+        return Base64.getEncoder().encodeToString(key);
 //        return (new BASE64Encoder()).encodeBuffer(key);
     }
 

@@ -1,4 +1,4 @@
-package com.steellee.util.security;
+package com.steellee.util.security.aesrsa;
 
 import org.junit.Test;
 
@@ -9,11 +9,13 @@ import static org.junit.Assert.assertEquals;
  * @version V2.0.0
  * @date 2019/01/19
  */
-public class AESCoderTest {
+public class AesCoderTest {
 
     @Test
-    public void test() throws Exception {
+    public void test() {
         String inputStr = "I am AES";
+
+        // 针对CBC模式，需要16位
         String key = "9999999999999999";
         System.err.println("原文:\t" + inputStr);
         System.err.println("密钥:\t" + key);
