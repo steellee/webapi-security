@@ -27,6 +27,12 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>1.5.10.RELEASE</version>
+        </dependency>
+
         <!--加密算法的Java实现-->
         <dependency>
             <groupId>org.bouncycastle</groupId>
