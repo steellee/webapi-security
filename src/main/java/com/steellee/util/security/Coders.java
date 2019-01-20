@@ -16,7 +16,7 @@ import java.util.Base64;
  * HMAC(Hash Message Authentication Code，散列消息鉴别码)单向加密；用来校验数据在传输过程中是否被修改；多了一个密钥，增强了数据传输过程中的安全性
  *
  * @author steellee
- * @version V2.0.0
+ * @version V1.0.0
  * @date 2019/01/19
  */
 public class Coders {

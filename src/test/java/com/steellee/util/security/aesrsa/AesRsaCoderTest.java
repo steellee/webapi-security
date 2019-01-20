@@ -11,7 +11,7 @@ import java.util.HashMap;
  * 开放接口方案：AES加解密数据 + RSA验签 应用示例
  *
  * @author steellee
- * @version V2.0.0
+ * @version V1.0.0
  * @date 2019/01/13
  */
 public class AesRsaCoderTest {
