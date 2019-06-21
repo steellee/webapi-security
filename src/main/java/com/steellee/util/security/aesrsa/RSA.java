@@ -189,8 +189,13 @@ public class RSA {
     }
 
     public static void main(String[] args) throws Exception {
-        Map map = generateKeyPair();
+        /*Map map = generateKeyPair();
         System.out.println("publicKey: " + map.get("publicKey"));
-        System.out.println("privateKey: " + map.get("privateKey"));
+        System.out.println("privateKey: " + map.get("privateKey"));*/
+        String pri = "MIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEAqKOamowB8Wo4NoV3PX/jcJ8zRuT1i/cdp28LD9E80fk3ujs59MWnD2G70/iYwR4HHQA+/DYZTM8ESyU7akMm1QIDAQABAkEAm0N+DXqIM3Abbz80iJ/dlIxO1p/o30PWvphDM/3uJFbu5M9sdu8cC/uM5JXPJ4x+wea2fn2GQdwYpm7ihJqswQIhAPZqxaKcu8aq6vKXZ3jlgVuaHwabE44diuFGNCABt3iFAiEArzKBfrnsce3h46NoJ2IEkFSzRSlsjNMuYvaExSGPbhECIDi2LBQXtFOtxHLei47UaygU2W0gxahgfjUIfjibjIktAiBZ5MVTG9z5fECqh97aTk3fLMarVxzuiTFE8A6iA51PsQIge8fmmFiAC7EbfX2mbdhD85P3wsoZQD/tW8iNeFIfUOE=";
+        String pub = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKijmpqMAfFqODaFdz1/43CfM0bk9Yv3HadvCw/RPNH5N7o7OfTFpw9hu9P4mMEeBx0APvw2GUzPBEslO2pDJtUCAwEAAQ==";
+
+        System.out.println(decrypt("IpsfLySPsMwcD5h8I+GrTdTjOuHhX16canvkM7I5+uFh7Pqzuvefewvt5X76mG0zTe9574KUR86mupfZtKhLFw==", pri));
+
     }
 }

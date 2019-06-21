@@ -23,14 +23,14 @@
 
     对称加密算法: 
         较传统的加密体制，通信双方在加/解密过程中使用他们共享的单一密钥，鉴于其算法简单和加密速度快的优点，目前仍然是主流的密码体制之一。
-    最常用的对称密码算法是数据加密标准（DES）算法，但是由于DES密钥长度较短，已经不适合当今分布式开放网络对数据加密安全性的要求。
+    最常用的对称密码算法是数据加密标准（DES）算法，但是由于DES密钥长度较短，已经不适合当今分布式开放网络对数据加密安全性的要求。1999年3DES的出现，也是DES向AES过渡的加密算法。
     最后，一种新的基于Rijndael算法对称高级数据加密标准AES取代了数据加密标准DES。
     
     ALGORITHM -->  算法/模式/补码方式; 如: AES -> 默认使用AES/ECB/PKCS5Padding
     1，算法: DES, DESede, AES,...RC4
       各自密钥长度不同
      * DES          key size must be equal to 56 
-     * DESede(TripleDES) key size must be equal to 112 or 168 
+     * 3DES(TripleDES) key size must be equal to 112 or 168 
      * AES          key size must be equal to 128, 192 or 256,but 192 and 256 bits may not be available 
      * Blowfish     key size must be multiple of 8, and can only range from 32 to 448 (inclusive) 
      * RC2          key size must be between 40 and 1024 bits 
