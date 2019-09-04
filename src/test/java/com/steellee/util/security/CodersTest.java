@@ -1,25 +1,25 @@
 package com.steellee.util.security;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
+import org.apache.commons.codec.binary.Hex;
 import org.junit.Test;
 
 import java.math.BigInteger;
-import java.util.Arrays;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 /**
+ * Description: 基础加密组件测试
+ *
  * @author steellee
  * @version V1.0.0
- * @Description TODO
  * @date 2019/01/19
  */
 public class CodersTest {
 
     @Test
     public void test() throws Exception {
-        String inputStr = "简单加密";
+        String inputStr = "123456";
         System.err.println("原文:" + inputStr);
 
         byte[] inputData = inputStr.getBytes();
@@ -51,6 +51,8 @@ public class CodersTest {
         assertArrayEquals(Coders.encryptHMAC(inputData, key), Coders.encryptHMAC(
             inputData, key));
 
+        System.out.println("MD5再转十六进制(大写):\n" + Hex.encodeHexString(Coders.encryptMD5(inputData),false));
+
         BigInteger md5 = new BigInteger(Coders.encryptMD5(inputData));
         System.err.println("MD5:\n" + md5.toString(16));
 
@@ -60,4 +62,20 @@ public class CodersTest {
         BigInteger mac = new BigInteger(Coders.encryptHMAC(inputData, key));
         System.err.println("HMAC:\n" + mac.toString(16));
     }
+
+    /*public static String bytesToHexString(byte[] src){
+        StringBuilder stringBuilder = new StringBuilder("");
+        if (src == null || src.length <= 0) {
+            return null;
+        }
+        for (int i = 0; i < src.length; i++) {
+            int v = src[i] & 0xFF;
+            String hv = Integer.toHexString(v);
+            if (hv.length() < 2) {
+                stringBuilder.append(0);
+            }
+            stringBuilder.append(hv);
+        }
+        return stringBuilder.toString();
+    }*/
 }
