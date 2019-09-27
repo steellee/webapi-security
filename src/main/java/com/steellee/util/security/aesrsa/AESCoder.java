@@ -1,18 +1,16 @@
 package com.steellee.util.security.aesrsa;
 
+import java.io.UnsupportedEncodingException;
+
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Map;
+
+import org.apache.commons.codec.binary.Hex;
+import org.apache.log4j.Logger;
+
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 /**
  * 对称加密算法: 适用DES,AES...
@@ -23,168 +21,141 @@ import java.util.Map;
 public class AESCoder {
 
     /** 算法/模式/补码方式 */
-    public static final String AES_ALGORITHM = "AES";
-//     public static final String AES_ALGORITHM = "AES/CBC/PKCS5Padding";
-//    public static final String AES_ALGORITHM = "DESede/CBC/PKCS5Padding";
-    public static final String CHAR_ENCODING = "UTF-8";
+    public static final String AES_TYPE = "AES/CBC/PKCS5Padding";
+    public static final String CODE_TYPE = "UTF-8";
+    public static final String AES_KEY = "a98fdfd1f87631a2a98fdfabf87631a2";
+    public static final String IVPARA = "0000000000000000";
+    //字符补全
+    private static final String[] consult = new String[]{"0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F","G"};
 
+    private static Logger logger = Logger.getLogger(AESCoder.class);
     /**
      * 加密
-     *
-     * @param data 需要加密的内容
-     * @param key  加密密码
+     * <pre>
+     * TODO 此处添加方法描述
+     * </pre>
+     * @date 2019年2月13日 上午8:42:59
+     * @param cleartext 待加密串
+     * @param aeskey 加密因子
      * @return
+     * @throws Exception
      */
-    public static byte[] encrypt(byte[] data, byte[] key) {
-        notEmpty(data, "data");
-        notEmpty(key, "key");
-        // 判断Key是否为16位(CBC模式需要)
-        if (key.length != 16) {
-            throw new RuntimeException("Invalid AES key length (must be 16 bytes)");
-        }
+    public static String encrypt(String cleartext, String aeskey) throws Exception{
         try {
-            SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
-            byte[] enCodeFormat = secretKey.getEncoded();
-            SecretKeySpec seckey = new SecretKeySpec(enCodeFormat, "AES");
-            // 创建密码器
-            Cipher cipher = Cipher.getInstance(AES_ALGORITHM);
-            if (AES_ALGORITHM.contains("CBC")) {
-                // 使用CBC模式，需要一个向量iv，可增加加密算法的强度
-                IvParameterSpec iv = new IvParameterSpec(key);
-                // 初始化
-                cipher.init(Cipher.ENCRYPT_MODE, seckey, iv);
-            } else {
-                // 初始化
-                cipher.init(Cipher.ENCRYPT_MODE, seckey);
+            byte[] encodeFormat = Hex.decodeHex(aeskey.toCharArray());
+            IvParameterSpec zeroIv = new IvParameterSpec(IVPARA.getBytes());
+            //两个参数，第一个为私钥字节数组， 第二个为加密方式 AES或者DES
+            SecretKeySpec key = new SecretKeySpec(encodeFormat, "AES");
+            //实例化加密类，参数为加密方式，要写全
+            Cipher cipher = Cipher.getInstance(AES_TYPE); //PKCS5Padding比PKCS7Padding效率高，PKCS7Padding可支持IOS加解密
+            //初始化，此方法可以采用三种方式，按加密算法要求来添加。（1）无第三个参数（2）第三个参数为SecureRandom random = new SecureRandom();中random对象，随机数。(AES不可采用这种方法)（3）采用此代码中的IVParameterSpec
+            //加密时使用:ENCRYPT_MODE;  解密时使用:DECRYPT_MODE;
+            cipher.init(Cipher.ENCRYPT_MODE, key, zeroIv); //CBC类型的可以在第三个参数传递偏移量zeroIv,ECB没有偏移量
+            //加密操作,返回加密后的字节数组，然后需要编码。主要编解码方式有Base64, HEX, UUE,7bit等等。此处看服务器需要什么编码方式
+            if(AES_TYPE.equals("AES/ECB/NoPadding")){
+                cleartext = completionCodeFor16Bytes(cleartext);
             }
-            // 加密
-            byte[] result = cipher.doFinal(data);
-            return result;
+            byte[] encryptedData = cipher.doFinal(cleartext.getBytes(CODE_TYPE));
+
+            return new BASE64Encoder().encode(encryptedData);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("encrypt fail!", e);
+            logger.error("加密出现异常", e);
+            throw e;
         }
     }
 
     /**
      * 解密
-     *
-     * @param data 待解密内容
-     * @param key  解密密钥
+     * <pre>
+     * TODO 此处添加方法描述
+     * </pre>
+     * @date 2019年2月13日 上午8:43:43
+     * @param encrypted 待解密串
+     * @param aeskey 解密因子
      * @return
+     * @throws Exception
      */
-    public static byte[] decrypt(byte[] data, byte[] key) {
-        notEmpty(data, "data");
-        notEmpty(key, "key");
-        if (key.length != 16) {
-            throw new RuntimeException("Invalid AES key length (must be 16 bytes)");
-        }
+    public static String decrypt(String encrypted, String aeskey) throws Exception{
         try {
-            SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
-            byte[] enCodeFormat = secretKey.getEncoded();
-            SecretKeySpec seckey = new SecretKeySpec(enCodeFormat, "AES");
-            // 创建密码器
-            Cipher cipher = Cipher.getInstance(AES_ALGORITHM);
-            if (AES_ALGORITHM.contains("CBC")) {
-                //使用CBC模式，需要一个向量iv，可增加加密算法的强度
-                IvParameterSpec iv = new IvParameterSpec(key);
-                // 初始化
-                cipher.init(Cipher.DECRYPT_MODE, seckey, iv);
-            } else {
-                // 初始化
-                cipher.init(Cipher.DECRYPT_MODE, seckey);
+            byte[] encodeFormat = Hex.decodeHex(aeskey.toCharArray());
+            IvParameterSpec zeroIv = new IvParameterSpec(IVPARA.getBytes());
+            byte[] byteMi = new BASE64Decoder().decodeBuffer(encrypted);
+            SecretKeySpec key = new SecretKeySpec(encodeFormat, "AES");
+            Cipher cipher = Cipher.getInstance(AES_TYPE);
+            cipher.init(Cipher.DECRYPT_MODE, key, zeroIv);
+            byte[] decryptedData = cipher.doFinal(byteMi);
+            String content = new String(decryptedData);
+            //还原
+            if(AES_TYPE.equals("AES/ECB/NoPadding")){
+                System.out.println("解密内容还原前: "+content);
+                content = resumeCodeOf16Bytes(content);
             }
-            // 解密
-            byte[] result = cipher.doFinal(data);
-            return result;
+            return content;
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("decrypt fail!", e);
+            logger.error("解密出现异常", e);
+            throw e;
         }
     }
 
-    public static String encryptToBase64(String data, String key) {
-        try {
-            byte[] valueByte = encrypt(data.getBytes(CHAR_ENCODING), key.getBytes(CHAR_ENCODING));
-            return new String(Base64.getEncoder().encode(valueByte));
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("encrypt fail!", e);
+    public static String completionCodeFor16Bytes(String str) throws UnsupportedEncodingException{
+        int num = str.getBytes(CODE_TYPE).length;
+        int index = num%16;
+        //进行加密内容补全操作, 加密内容应该为 16字节的倍数, 当不足16*n字节是进行补全, 差一位时 补全16+1位
+        //补全字符 以 $ 开始,$后一位代表$后补全字符位数,之后全部以0进行补全;
+        if(index != 0){
+            StringBuffer sbBuffer = new StringBuffer(str);
+            if(16-index == 1){
+                sbBuffer.append("$" + consult[16-1] + addStr(16-1-1));
+            }else{
+                sbBuffer.append("$" + consult[16-index-1] + addStr(16-index-1-1));
+            }
+            str = sbBuffer.toString();
         }
-
+        return str;
     }
 
-    public static String decryptFromBase64(String data, String key) {
-        try {
-            byte[] originalData = Base64.getDecoder().decode(data.getBytes());
-            byte[] valueByte = decrypt(originalData, key.getBytes(CHAR_ENCODING));
-            return new String(valueByte, CHAR_ENCODING);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("decrypt fail!", e);
+    //追加字符
+    public static String addStr(int num){
+        StringBuffer sbBuffer = new StringBuffer("");
+        for (int i = 0; i < num; i++) {
+            sbBuffer.append("0");
         }
+        return sbBuffer.toString();
     }
 
-    public static String encryptWithKeyBase64(String data, String key) {
-        try {
-            byte[] valueByte = encrypt(data.getBytes(CHAR_ENCODING), Base64.getDecoder().decode(key.getBytes()));
-            return new String(Base64.getEncoder().encode(valueByte));
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("encrypt fail!", e);
+    public static String resumeCodeOf16Bytes(String str){
+        int indexOf = str.lastIndexOf("$");
+        if(indexOf == -1){
+            return str;
         }
-    }
-
-    public static String decryptWithKeyBase64(String data, String key) {
-        try {
-            byte[] originalData = Base64.getDecoder().decode(data.getBytes());
-            byte[] valueByte = decrypt(originalData, Base64.getDecoder().decode(key.getBytes()));
-            return new String(valueByte, CHAR_ENCODING);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("decrypt fail!", e);
+        String trim = str.substring(indexOf+1,indexOf+2).trim();
+        int num = 0;
+        for (int i = 0; i < consult.length; i++) {
+            if(trim.equals(consult[i])){
+                num = i;
+            }
         }
-    }
-
-    public static byte[] genarateRandomKey() {
-        KeyGenerator keygen = null;
-        try {
-            keygen = KeyGenerator.getInstance("AES");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(" genarateRandomKey fail!", e);
+        if(num == 0){
+            return str;
         }
-        SecureRandom random = new SecureRandom();
-        keygen.init(random);
-        Key key = keygen.generateKey();
-        return key.getEncoded();
-    }
-
-    public static void main(String[] args) {
-        System.out.println(Arrays.toString(genarateRandomKey())
-);
-    }
-    public static String genarateRandomKeyWithBase64() {
-        return new String(Base64.getEncoder().encode(genarateRandomKey()));
+        return str.substring(0,indexOf).trim();
     }
 
 
-    /**
-     * 验证对象是否为NULL,空字符串，空数组，空的Collection或Map(只有空格的字符串也认为是空串)
-     * @param obj 被验证的对象
-     * @param message 异常信息
-     */
-    @SuppressWarnings("rawtypes")
-    public static void notEmpty(Object obj, String message) {
-        if (obj == null){
-            throw new IllegalArgumentException(message + " must be specified");
-        }
-        if (obj instanceof String && obj.toString().trim().length()==0){
-            throw new IllegalArgumentException(message + " must be specified");
-        }
-        if (obj.getClass().isArray() && Array.getLength(obj)==0){
-            throw new IllegalArgumentException(message + " must be specified");
-        }
-        if (obj instanceof Collection && ((Collection)obj).isEmpty()){
-            throw new IllegalArgumentException(message + " must be specified");
-        }
-        if (obj instanceof Map && ((Map)obj).isEmpty()){
-            throw new IllegalArgumentException(message + " must be specified");
-        }
+    public static void main(String[] args) throws Exception {
+        String content = "我们来测试一下";
+        String key = "a98fdfd1f87631a2a98fdfabf87631a2";
+        test(content, key);
+    }
+
+    public static void test(String content, String key) throws Exception{
+        logger.info("加密内容：" + content);
+        // 加密
+        String encryptResult = encrypt(content,AES_KEY);
+        logger.info("加密后：" + encryptResult);
+
+        // 解密
+        String decryptResult = decrypt(encryptResult,AES_KEY);
+        logger.info("解密完成后：" + decryptResult);
     }
 }

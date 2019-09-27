@@ -35,7 +35,12 @@ public class RSA {
     /**
      * RSA 签名算法
      */
-    private static String SIGNATURE_ALGORITHM = "SHA256WithRSA";
+    private static String SIGNATURE_ALGORITHM__SHA1RSA = "SHA1WithRSA";
+    /**
+     * RSA2 签名算法（推荐）
+     */
+//    private static String SIGNATURE_ALGORITHM_SHA256RSA = "SHA1WithRSA";
+    private static String SIGNATURE_ALGORITHM_SHA256RSA = "SHA256WithRSA";
 
     /**
      * 生成密钥对
@@ -147,7 +152,7 @@ public class RSA {
             KeyFactory keyf = KeyFactory.getInstance("RSA");
             PrivateKey priKey = keyf.generatePrivate(priPKCS8);
 
-            Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
+            Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM_SHA256RSA);
 
             signature.initSign(priKey);
             signature.update(content.getBytes(charset));
@@ -175,7 +180,7 @@ public class RSA {
             byte[] encodedKey = Base64.getDecoder().decode(publicKey);
             PublicKey pubKey = keyFactory.generatePublic(new X509EncodedKeySpec(encodedKey));
 
-            java.security.Signature signature = java.security.Signature.getInstance(SIGNATURE_ALGORITHM);
+            java.security.Signature signature = java.security.Signature.getInstance(SIGNATURE_ALGORITHM_SHA256RSA);
 
             signature.initVerify(pubKey);
             signature.update(content.getBytes("utf-8"));
@@ -192,10 +197,15 @@ public class RSA {
         /*Map map = generateKeyPair();
         System.out.println("publicKey: " + map.get("publicKey"));
         System.out.println("privateKey: " + map.get("privateKey"));*/
-        String pri = "MIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEAqKOamowB8Wo4NoV3PX/jcJ8zRuT1i/cdp28LD9E80fk3ujs59MWnD2G70/iYwR4HHQA+/DYZTM8ESyU7akMm1QIDAQABAkEAm0N+DXqIM3Abbz80iJ/dlIxO1p/o30PWvphDM/3uJFbu5M9sdu8cC/uM5JXPJ4x+wea2fn2GQdwYpm7ihJqswQIhAPZqxaKcu8aq6vKXZ3jlgVuaHwabE44diuFGNCABt3iFAiEArzKBfrnsce3h46NoJ2IEkFSzRSlsjNMuYvaExSGPbhECIDi2LBQXtFOtxHLei47UaygU2W0gxahgfjUIfjibjIktAiBZ5MVTG9z5fECqh97aTk3fLMarVxzuiTFE8A6iA51PsQIge8fmmFiAC7EbfX2mbdhD85P3wsoZQD/tW8iNeFIfUOE=";
-        String pub = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKijmpqMAfFqODaFdz1/43CfM0bk9Yv3HadvCw/RPNH5N7o7OfTFpw9hu9P4mMEeBx0APvw2GUzPBEslO2pDJtUCAwEAAQ==";
 
-        System.out.println(decrypt("IpsfLySPsMwcD5h8I+GrTdTjOuHhX16canvkM7I5+uFh7Pqzuvefewvt5X76mG0zTe9574KUR86mupfZtKhLFw==", pri));
+        String pri = "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCBsdlc28P9Su8a1cY6V2LTT1ADDeCD/wyQFijH66vhd724eTLYeesNO74O56HP0JHM1X07J8GSv+Xhyo0b7WbQzICYb1pUlPMY7VbBRpbIVTQic57x+ErRMocGNl5Hnnr9Od++PnfFkysqCzyiQi8j6UH83TJXqS1gIHKGbg44XdVLQwphzOmf8pul6TaBldCXBQRFIiTZMkhvW3a8sJZwb2FY4u+0B36x3l+zYVltcVVIqaQn17POzNeNHuvH1k0AiwL2TbUFvVUjrAxllIsqgl/J+Xr0C8Pt+wnKfFS3rM7OztUiNOQPF70lQQXKNSnBg/fVrxupEdCHqGQ/90IBAgMBAAECggEAM62sUQX4yHsNX4IDJMghRtX5qd3jsnT0io1p3o+Xw5W08UbJ7dxWvsUpbEL8BRS0pAwFhIbI6TKx5RCSvagRKe3y58qnEcDwROR9hzIbbuQUjA3KLdyj40vg5abQVnVdyH1BHEtD6mRD9NLZbEY3BnYxpxJ0tt1giUckm1BLNkYLrhcV5g4Wkhhc/71MkIiTl/imH91VinOpPgcslGhk4fXEUbkQBpVR/Vf9DKzbPmAcHCvA+V1Ga/1p2GYXtJgFJFJYvoKwQNwDdafd3477GQiK8OsVlto7FZHaiN/HWkC8uOnGZyNDhMXWMmFO1EvMGnCytPbKvUDW+tx3o6QIiQKBgQDGy1J/v0lvHr7I4R85wXjfA05xx5miAsAfC7ivvbgrX3aYb4eiTKcLVaIUDx/xjBeQPLqiWbV70Ix0FxFktzCk0P2pxdJIQS11jQyL9pqbu5IE/m7Od4oCr9ZVr0Z+MPYApLljzbGHA3P9TyI9rb17Z6rnDYikGYxxydXpMbUFVwKBgQCnBCM+X+Qww3FvcSU7dAJ5TmwHKaSc4IMGsGP96t1FOPtjxHas3t09R40R2vBBhKiBB4sK7kkeq0Jt37tMLjJQwfoxPixEPvY3Ikke6s008AzXynGIkXK8rSo2Pv0iXP2sNaqOPZO1bjUA1E08orS7NdzHjjLmfixp8IyZSaFEZwKBgQC3Ychw39y2DP6iAEn11WvTDhHHFAG9Whwwh3ePZswF9sJITFoqdduCsTQanPkysbDq9ZqVOXwZA4ENdlotNnBBGill+37H+Jge4Ea6tnpZPuashKli/RLq95oY4N9+eVv1q/74+j7R9XWCLwW/MA6jUDZvfiSWfJr6PN5/h8MdcQKBgQCKRHKpANn5RNR0XkdkoPYrVzE3/NG6zmOq9fzSCc6FsFbukYduNlMSmFnBnm+ozhpyN7x0oDEIot+r9r0opFYjZXOrsL0VAsrzef7vCZQ5b0Iyo/a6CS/j47g+kIcgG7wnBYbdmzzdxw86UIhg2pKlKkJNMvwQtgQu8GZ1wO8xoQKBgGpFxhhZoqKDfu12LPQjxW+ga8SS0ZcTcIxN+a/TXlsdoCT+w+Uwjmn0JcX8gSL4W9RdDcyfTnKOUKa8CZe2DhISs7LeKS/PUlrLjqPF/O0GJPRpeBc7GbhPF4PhmzSafV9VIQj88CrvD7S0VJl+Atxu1MzbIHeuFpWjpu744ARc";
+        String pub = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgbHZXNvD/UrvGtXGOldi009QAw3gg/8MkBYox+ur4Xe9uHky2HnrDTu+Duehz9CRzNV9OyfBkr/l4cqNG+1m0MyAmG9aVJTzGO1WwUaWyFU0InOe8fhK0TKHBjZeR556/Tnfvj53xZMrKgs8okIvI+lB/N0yV6ktYCByhm4OOF3VS0MKYczpn/Kbpek2gZXQlwUERSIk2TJIb1t2vLCWcG9hWOLvtAd+sd5fs2FZbXFVSKmkJ9ezzszXjR7rx9ZNAIsC9k21Bb1VI6wMZZSLKoJfyfl69AvD7fsJynxUt6zOzs7VIjTkDxe9JUEFyjUpwYP31a8bqRHQh6hkP/dCAQIDAQAB";
+
+        String test = "RSA2 测试一下";
+        // 公钥加密
+        String decryptStr = encrypt(test, pub);
+        // 私钥解密
+        System.out.println(decrypt(decryptStr, pri));
 
     }
 }

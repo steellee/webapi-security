@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 public class AesCoderTest {
 
     @Test
-    public void test() {
+    public void test() throws Exception{
         String inputStr = "I am AES";
 
         // 针对CBC模式，需要16位
@@ -22,11 +22,11 @@ public class AesCoderTest {
         System.err.println("原文:\t" + inputStr);
         System.err.println("密钥:\t" + key);
 
-        String inputData = AESCoder.encryptToBase64(inputStr, key);
+        String inputData = AESCoder.encrypt(inputStr, key);
 
         System.err.println("加密后:\t" + inputData);
 
-        String outputData = AESCoder.decryptFromBase64(inputData, key);
+        String outputData = AESCoder.decrypt(inputData, key);
 
         System.err.println("解密后:\t" + outputData);
 

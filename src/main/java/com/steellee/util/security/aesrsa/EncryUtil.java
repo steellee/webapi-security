@@ -44,7 +44,7 @@ public class EncryUtil {
      * @return 验签是否通过
      */
     public static boolean checkDecryptAndSign(String data, String encrypt_key, String clientPublicKey,
-        String serverPrivateKey) {
+        String serverPrivateKey) throws Exception{
 
         /** 1.使用server的私钥解开aesEncrypt。 */
         String AESKey = "";
@@ -57,7 +57,7 @@ public class EncryUtil {
         }
 
         /** 2.用aeskey解开data。取得data明文 */
-        String realData = AESCoder.decryptFromBase64(data, AESKey);
+        String realData = AESCoder.decrypt(data, AESKey);
 
         HashMap<String, String> map = JSON.parseObject(realData, new TypeReference<HashMap<String, String>>() {});
 

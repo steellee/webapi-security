@@ -90,7 +90,7 @@ public class AesRsaCoderTest {
         System.out.println("6. 将签名加入到请求参数中，然后转换为json格式--加密前的请求数据:\n" +  jsonParams);
 
         // 7. client使用aesKey对请求数据(jsonParams)进行加密得到密文(data)
-        String data = AESCoder.encryptToBase64(jsonParams, aesKey);
+        String data = AESCoder.encrypt(jsonParams, aesKey);
         System.out.println("7. client使用aesKey对json数据进行加密得到密文(data): "+ data);
 
 
@@ -117,7 +117,7 @@ public class AesRsaCoderTest {
             System.out.println("2, 验签通过。使用sever私钥对encryptkey进行解密，得到aeskey: "+ aeskey);
 
             // 3，使用aesKey对json数据进行解密得到明文(data)
-            String data = AESCoder.decryptFromBase64(RequestInfo.data, aeskey);
+            String data = AESCoder.decrypt(RequestInfo.data, aeskey);
             System.out.println("3，使用aesKey对json数据进行解密得到明文(data) : "+ data);
 
             JSONObject jsonObj = JSONObject.parseObject(data);
