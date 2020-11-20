@@ -479,13 +479,13 @@ const BASE64_MAP = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 function base64_encode(bytes) {
 	var i = 0, j = 0;
 	var append = bytes.length % 3 > 0 ? 3 - bytes.length % 3 : 0;
-	
+
 	var b64 = "";
 	for (i = 0; j < bytes.length; j += 3) {
 		var add = BASE64_MAP[bytes[j] >> 2]
-		+ BASE64_MAP[(bytes[j] & 3) << 4 | bytes[j+1] >> 4]
-		+ ((j+1<bytes.length) ? BASE64_MAP[(bytes[j+1] & 15) << 2 | bytes[j+2] >> 6] : '')
-		+ ((j+2<bytes.length) ? BASE64_MAP[bytes[j+2] & 63] : '')
+			+ BASE64_MAP[(bytes[j] & 3) << 4 | bytes[j+1] >> 4]
+			+ ((j+1<bytes.length) ? BASE64_MAP[(bytes[j+1] & 15) << 2 | bytes[j+2] >> 6] : '')
+			+ ((j+2<bytes.length) ? BASE64_MAP[bytes[j+2] & 63] : '')
 		;
 		b64 += add
 	}
@@ -497,8 +497,8 @@ function base64_encode(bytes) {
 
 // export
 function sm3_hmac_utf8(source, key) {
-  var hmac = sm3_hmac(getBytes(source), getBytes(key), sm3(getBytes(key)))
-  return base64_encode(hmac)
+	var hmac = sm3_hmac(getBytes(source), getBytes(key), sm3(getBytes(key)))
+	return base64_encode(hmac)
 }
 
 
@@ -519,5 +519,5 @@ let key = '12345678'
 
 //let b = sm3_hmac_utf8(base64_encode(getBytes(value)), key)
 //let b = sm3_hmac_utf8(value, key)
-let b = sm3_hmac_utf8(encodeURIComponent(value), key)
+let b = sm3_hmac_utf8(encodeURIComponent(value), key)
 console.log(b)
