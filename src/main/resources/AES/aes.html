@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="gbk">
+    <title>AES TEST</title>
+</head>
+<body>
+<p>待加密值：测试一下abac1232</p>
+<p id="p1"></p>
+<p id="p2"></p>
+
+<script type="text/javascript" src="https://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" src="../aes/aes.js"></script>
+<script type="text/javascript" src="../aes/pad-zeropadding.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var data = "测试一下abac1232%…";
+        var key = CryptoJS.enc.Latin1.parse('abcdef0123456789');
+        var iv = CryptoJS.enc.Latin1.parse('0123456789abcdef');
+
+        //加密
+        var encrypted = CryptoJS.AES.encrypt(data, key, {
+            iv: iv,
+            mode: CryptoJS.mode.CBC,
+            padding: CryptoJS.pad.ZeroPadding
+        });
+        $("#p1").text("加密结果："+encrypted.toString());
+        console.log(encrypted.toString())
+        //解密
+        var decrypted = CryptoJS.AES.decrypt(encrypted, key, {iv: iv, padding: CryptoJS.pad.ZeroPadding});
+        console.log(decrypted.toString(CryptoJS.enc.Utf8));
+        $("#p2").text("解密结果："+decrypted.toString(CryptoJS.enc.Utf8));
+    })
+</script>
+</body>
+</html>

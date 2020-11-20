@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.1.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/enc-base64.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/md5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/evpkdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/cipher-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/aes.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/pad-pkcs7.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/mode-ecb.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/enc-utf8.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/enc-hex.min.js"></script> -->
+
+<!-- 引入 CDN Crypto.js 结束 -->
+    <script type="text/javascript"  src="./crypto-js/crypto-js.js" charset="UTF-8"></script>
+    <script type="text/javascript"  src="./jsencrypt/bin/jsencrypt.min.js" charset="UTF-8"></script>
+    <title>3DES加密解密与Base64编码解码处理数据</title>
+    <style type="text/css">
+        body {
+            margin: 100px;
+        }
+        p, button {
+            font-size: 30px;
+        }
+        .btn2 {
+            margin-left: 100px;
+        }
+    </style>
+ 
+</head>
+<body>
+        <h1>原文:</h1><p id="content">我是加密数据,点击下方加密按钮给我加密</p>
+        <h1>加密编码后:</h1><p id="encrypt"></p>
+        <h1>解码解密后:</h1><p id="decrypt"></p>
+        <button class="btn1" οnclick="encrypt()">加密</button>
+        <button class="btn2" οnclick="decrypt()">解密</button>
+        <script type="text/javascript">
+          //秘钥key
+          var key = "12345677654321";
+          //key不足24位自动以0(最小位数是0)补齐,如果多余24位,则截取前24位,后面多余则舍弃掉
+          var base64 = CryptoJS.enc.Utf8.parse(key)
+          //加密使用的是3DES中的ECB,解密对应的使用ECB
+          function encrypt() {
+            console.log('encrypt')
+              var text = document.getElementById("content").innerText;
+              var encrypt = CryptoJS.TripleDES.encrypt(text, base64, {
+                      //iv: CryptoJS.enc.Utf8.parse('01234567'),//iv偏移量
+                      //mode: CryptoJS.mode.CBC,  //CBC模式
+                      mode: CryptoJS.mode.ECB,  //ECB模式
+                      padding: CryptoJS.pad.Pkcs7//padding处理
+                  }
+              );
+              var encryptData = encrypt.toString();//加密完成后，转换成字符串
+              document.getElementById("encrypt").innerText=encryptData;
+          }
+          //解密
+          function decrypt() {
+            console.log('decrypt')
+              var text = document.getElementById("encrypt").innerText;
+              var decrypt = CryptoJS.TripleDES.decrypt(text, base64, {
+                      //iv: CryptoJS.enc.Utf8.parse('01234567'),
+                      //mode: CryptoJS.mode.CBC,
+                      mode: CryptoJS.mode.ECB,
+                      padding: CryptoJS.pad.Pkcs7
+                  }
+              );
+              //解析数据后转为UTF-8
+              var parseData = decrypt.toString(CryptoJS.enc.Utf8);
+              document.getElementById("decrypt").innerText=parseData;
+          }
+          $('.btn1').on('click', encrypt)
+          $('.btn1').on('click', decrypt)
+      </script>
+</body>
+</html>

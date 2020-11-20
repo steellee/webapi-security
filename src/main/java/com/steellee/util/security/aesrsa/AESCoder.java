@@ -1,6 +1,7 @@
 package com.steellee.util.security.aesrsa;
 
 import java.io.UnsupportedEncodingException;
+import java.security.Security;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -9,6 +10,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.log4j.Logger;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
@@ -18,6 +20,7 @@ import sun.misc.BASE64Encoder;
  * @author steellee
  * @date 2019/1/17
  */
+@Deprecated
 public class AESCoder {
 
     /** 算法/模式/补码方式 */
@@ -42,6 +45,9 @@ public class AESCoder {
      */
     public static String encrypt(String cleartext, String aeskey) throws Exception{
         try {
+                        //如果是PKCS7Padding填充方式，则必须加上下面这行
+            Security.addProvider(new BouncyCastleProvider());
+
             byte[] encodeFormat = Hex.decodeHex(aeskey.toCharArray());
             IvParameterSpec zeroIv = new IvParameterSpec(IVPARA.getBytes());
             //两个参数，第一个为私钥字节数组， 第二个为加密方式 AES或者DES
@@ -143,19 +149,19 @@ public class AESCoder {
 
 
     public static void main(String[] args) throws Exception {
-        String content = "我们来测试一下";
+        String content = "测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0测试一下abac1232%……￥#%……=0";
         String key = "a98fdfd1f87631a2a98fdfabf87631a2";
         test(content, key);
     }
 
     public static void test(String content, String key) throws Exception{
-        logger.info("加密内容：" + content);
+        System.out.println("加密内容：" + content);
         // 加密
         String encryptResult = encrypt(content,AES_KEY);
-        logger.info("加密后：" + encryptResult);
+        System.out.println("加密后：" + encryptResult);
 
         // 解密
         String decryptResult = decrypt(encryptResult,AES_KEY);
-        logger.info("解密完成后：" + decryptResult);
+        System.out.println("解密完成后：" + decryptResult);
     }
 }

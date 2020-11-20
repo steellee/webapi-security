@@ -1,16 +1,13 @@
 package com.steellee.util.security.sm;
 
-import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
-import org.bouncycastle.util.encoders.Hex;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.Arrays;
 
 public class SM3UtilTest {
 
     // 源数据
     public static final byte[] SRC_DATA = new byte[]{1, 2, 3, 4, 5, 6, 7, 8};
+    public static final String SRC_DATA_S = "abc123您好";
 
     public static void main(String[] args) {
 
@@ -22,9 +19,9 @@ public class SM3UtilTest {
     @Test
     public void testHashAndVerify() {
         try {
-            byte[] hash = SM3Util.hash(SRC_DATA);
-            System.out.println("SM3 hash result:\n" + ByteUtils.toHexString(hash));
-            boolean flag = SM3Util.verify(SRC_DATA, hash);
+            String hash = SM3Util.hash(SRC_DATA);
+            System.out.println("SM3 hash result:\n" + hash);
+            boolean flag = SM3Util.verify(SRC_DATA_S, hash);
             if (!flag) {
                 Assert.fail();
             }

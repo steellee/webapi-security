@@ -15,6 +15,7 @@ import java.security.SecureRandom;
  * @version 1.0.0
  * Create Time: 2019/6/24 14:49
  */
+@Deprecated
 public class DesUtils {
 
     private final static String DES = "DES";
@@ -73,5 +74,9 @@ public class DesUtils {
         } catch (Exception e) {
         }
         return null;
+    }
+
+    public static void main(String[] args) throws Exception {
+        System.out.println(encrypt("abc".getBytes(), "123456781234567812345678".getBytes("utf-8")));
     }
 }

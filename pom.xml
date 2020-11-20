@@ -37,13 +37,13 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.60</version>
+            <version>1.67</version>
         </dependency>
         <!--用于CMS、PKCS、EAC、TSP、CMP、CRMF、OCSP和证书生成的Java api-->
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
-            <version>1.60</version>
+            <version>1.67</version>
         </dependency>
 
         <dependency>
@@ -76,6 +76,10 @@
             <artifactId>commons-codec</artifactId>
             <version>1.12</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.12</version>
+        </dependency>
     </dependencies>
 </project>

@@ -4,10 +4,12 @@ import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.KeyParameter;
 
-import java.util.Arrays;
+import java.net.URLEncoder;
+import java.util.Base64;
 
 /**
  * SM3 消息摘要。
+ * js（请查看resource下的SM3目录demo）与java通用
  *
  * SM3算法，已公开，可以用MD5作为对比理解。输出长度为256Bit（32Byte），因此SM3算法的安全性要高于MD5算法和SHA-1算法。
  * <p>
@@ -16,7 +18,7 @@ import java.util.Arrays;
  * @author steellee
  * @date 2019/1/17
  */
-public class SM3Util extends GMBaseUtil {
+public class SM3Util {
 
     /**
      * 获取数字签名
@@ -24,22 +26,22 @@ public class SM3Util extends GMBaseUtil {
      * @param srcData 源数据
      * @return
      */
-    public static byte[] hash(byte[] srcData) {
+    public static String hash(byte[] srcData) {
         SM3Digest digest = new SM3Digest();
         digest.update(srcData, 0, srcData.length);
         byte[] hash = new byte[digest.getDigestSize()];
         digest.doFinal(hash, 0);
-        return hash;
+        return Base64.getEncoder().encodeToString(hash);
     }
 
     /**
      * 签名（SM3算法 + Base64）, 编码采用：UTF-8
      *
-     * @param secretKey 密钥
      * @param srcData   源数据
+     * @param secretKey 密钥
      * @return 数字签名
      */
-    public static String hmac(String secretKey, String srcData) throws Exception {
+    public static String hmac(String srcData, String secretKey) throws Exception {
         KeyParameter keyParameter = new KeyParameter(secretKey.getBytes("UTF-8"));
         SM3Digest digest = new SM3Digest();
         HMac mac = new HMac(digest);
@@ -48,7 +50,7 @@ public class SM3Util extends GMBaseUtil {
         mac.update(hsrcData, 0, hsrcData.length);
         byte[] signData = new byte[mac.getMacSize()];
         mac.doFinal(signData, 0);
-        return new sun.misc.BASE64Encoder().encode(signData);
+        return Base64.getEncoder().encodeToString(signData);
     }
 
     /**
@@ -58,9 +60,10 @@ public class SM3Util extends GMBaseUtil {
      * @param sm3Hash 数字签名
      * @return 是否匹配
      */
-    public static boolean verify(byte[] srcData, byte[] sm3Hash) {
-        byte[] newHash = hash(srcData);
-        if (Arrays.equals(newHash, sm3Hash)) {
+    public static boolean verify(String srcData, String sm3Hash) throws Exception {
+        String newHash = hash(srcData.getBytes("UTF-8"));
+        if (newHash.equals(sm3Hash)) {
+//        if (Arrays.equals(newHash, sm3Hash)) {
             return true;
         } else {
             return false;
@@ -82,5 +85,15 @@ public class SM3Util extends GMBaseUtil {
         } else {
             return false;
         }
+    }
+
+    public static void main(String[] args) throws Exception {
+        String source = "abc124567我们";
+        String encodeSource = Base64.getEncoder().encodeToString(source.getBytes("UTF-8"));
+        String urlEncodeSource = URLEncoder.encode(source,"UTF-8");
+//        System.out.println(encodeSource);
+        String key = "12345678";
+        System.out.println("获取数字签名(无key): "+ hash(encodeSource.getBytes("UTF-8")));
+        System.out.println("获取数字签名(有key): "+ hmac(urlEncodeSource, key));
     }
 }
